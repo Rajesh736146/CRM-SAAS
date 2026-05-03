@@ -7,10 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+    style: "decimal",
     minimumFractionDigits: 0,
-  }).format(value);
+    maximumFractionDigits: 2,
+  }).format(value) + " ¤";
 }
 
 export function formatDate(date: Date | string) {
