@@ -1,5 +1,7 @@
 import { DealController } from "@/lib/controllers/deal.controller";
 
+export const dynamic = "force-dynamic";
+
 export const GET = (req: Request, { params }: { params: { id: string } }) =>
   DealController.getOne(req, params.id);
 

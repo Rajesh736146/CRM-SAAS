@@ -1,5 +1,7 @@
 import { ActivityController } from "@/lib/controllers/activity.controller";
 
+export const dynamic = "force-dynamic";
+
 export const GET = (_req: Request, { params }: { params: { id: string } }) =>
   ActivityController.getOne(params.id);
 

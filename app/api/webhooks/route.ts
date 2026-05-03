@@ -5,6 +5,8 @@ import { can } from "@/lib/permissions";
 import { canUseFeature } from "@/lib/entitlements";
 import { WebhookService } from "@/lib/services/webhook.service";
 
+export const dynamic = "force-dynamic";
+
 const AVAILABLE_EVENTS = [
   "contact.created", "contact.updated", "contact.deleted",
   "deal.created", "deal.updated", "deal.stage_changed", "deal.deleted",

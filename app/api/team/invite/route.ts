@@ -4,6 +4,8 @@ import { resolveAuth } from "@/lib/api-auth";
 import { can } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 const schema = z.object({
   email: z.string().email(),
   role: z.enum(["ADMIN", "MEMBER"]).default("MEMBER"),

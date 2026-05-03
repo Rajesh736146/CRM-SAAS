@@ -4,6 +4,8 @@ import { resolveAuth } from "@/lib/api-auth";
 import { can } from "@/lib/permissions";
 import { WebhookService } from "@/lib/services/webhook.service";
 
+export const dynamic = "force-dynamic";
+
 const updateSchema = z.object({
   url: z.string().url().optional(),
   events: z.array(z.string()).optional(),

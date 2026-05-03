@@ -4,6 +4,8 @@ import { resolveAuth } from "@/lib/api-auth";
 import { can } from "@/lib/permissions";
 import { PipelineService } from "@/lib/services/pipeline.service";
 
+export const dynamic = "force-dynamic";
+
 const stageSchema = z.object({
   name: z.string().min(1),
   color: z.string().optional(),

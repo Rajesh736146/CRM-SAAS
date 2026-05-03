@@ -1,5 +1,7 @@
 import { ContactController } from "@/lib/controllers/contact.controller";
 
+export const dynamic = "force-dynamic";
+
 export const GET = (req: Request, { params }: { params: { id: string } }) =>
   ContactController.getOne(req, params.id);
 

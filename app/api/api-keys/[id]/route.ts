@@ -3,6 +3,8 @@ import { resolveAuth } from "@/lib/api-auth";
 import { can } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const ctx = await resolveAuth(req);
   if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

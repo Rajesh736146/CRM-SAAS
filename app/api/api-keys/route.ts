@@ -7,6 +7,8 @@ import { can } from "@/lib/permissions";
 import { canUseFeature } from "@/lib/entitlements";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 const createSchema = z.object({
   name: z.string().min(1),
   expiresAt: z.string().optional(),

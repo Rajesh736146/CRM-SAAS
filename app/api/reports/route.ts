@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { resolveAuth } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
   const ctx = await resolveAuth(req);
   if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

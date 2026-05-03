@@ -3,6 +3,8 @@ import { resolveAuth } from "@/lib/api-auth";
 import { can } from "@/lib/permissions";
 import { AuditService } from "@/lib/services/audit.service";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
   const ctx = await resolveAuth(req);
   if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
