@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import ActivitiesList from "@/components/activities/activities-list";
 import NewActivityButton from "@/components/activities/new-activity-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function ActivitiesPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

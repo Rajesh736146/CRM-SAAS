@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import ContactsTable from "@/components/contacts/contacts-table";
 import NewContactButton from "@/components/contacts/new-contact-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function ContactsPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

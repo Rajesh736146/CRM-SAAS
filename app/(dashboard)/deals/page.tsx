@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import DealsKanban from "@/components/deals/deals-kanban";
 import NewDealButton from "@/components/deals/new-deal-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function DealsPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

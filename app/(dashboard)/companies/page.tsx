@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import CompaniesTable from "@/components/companies/companies-table";
 import NewCompanyButton from "@/components/companies/new-company-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function CompaniesPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

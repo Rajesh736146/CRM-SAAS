@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import ApiKeysManager from "@/components/settings/api-keys-manager";
 import { canUseFeature } from "@/lib/entitlements";
 
+export const dynamic = "force-dynamic";
+
 export default async function ApiKeysPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

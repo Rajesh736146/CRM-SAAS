@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import TeamManager from "@/components/settings/team-manager";
 
+export const dynamic = "force-dynamic";
+
 export default async function TeamPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

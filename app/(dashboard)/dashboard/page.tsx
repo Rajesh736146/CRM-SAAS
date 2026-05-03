@@ -5,6 +5,8 @@ import { Users, TrendingUp, Coins, Target } from "lucide-react";
 import RecentActivity from "@/components/dashboard/recent-activity";
 import DealsByStage from "@/components/dashboard/deals-by-stage";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

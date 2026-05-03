@@ -3,6 +3,8 @@ import { PipelineService } from "@/lib/services/pipeline.service";
 import PipelineBoard from "@/components/pipelines/pipeline-board";
 import NewPipelineButton from "@/components/pipelines/new-pipeline-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function PipelinesPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

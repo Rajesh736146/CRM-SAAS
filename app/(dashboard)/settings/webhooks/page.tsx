@@ -3,6 +3,8 @@ import { WebhookService } from "@/lib/services/webhook.service";
 import WebhooksManager from "@/components/settings/webhooks-manager";
 import { canUseFeature } from "@/lib/entitlements";
 
+export const dynamic = "force-dynamic";
+
 export default async function WebhooksPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

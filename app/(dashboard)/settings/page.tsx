@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Users, Key, Webhook, Shield, Building2 } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function SettingsPage() {
   const session = await auth();
   const orgId = (session?.user as any)?.organizationId;

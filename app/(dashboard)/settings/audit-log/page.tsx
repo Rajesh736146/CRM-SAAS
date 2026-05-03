@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { AuditService } from "@/lib/services/audit.service";
 import { formatDate } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 const ACTION_COLORS: Record<string, string> = {
   "contact.created": "bg-green-100 text-green-700",
   "contact.updated": "bg-blue-100 text-blue-700",
