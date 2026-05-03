@@ -9,7 +9,7 @@ export default async function DealsPage() {
 
   const deals = await prisma.deal.findMany({
     where: { organizationId: orgId },
-    include: { contact: true, company: true },
+    include: { contact: true, company: true, stage: true },
     orderBy: { createdAt: "desc" },
   });
 

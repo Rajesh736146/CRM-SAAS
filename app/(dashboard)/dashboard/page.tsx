@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/utils";
-import { Users, TrendingUp, DollarSign, Target } from "lucide-react";
+import { Users, TrendingUp, Coins, Target } from "lucide-react";
 import RecentActivity from "@/components/dashboard/recent-activity";
 import DealsByStage from "@/components/dashboard/deals-by-stage";
 
@@ -20,23 +20,26 @@ export default async function DashboardPage() {
     }),
     prisma.deal.findMany({
       where: { organizationId: orgId },
-      select: { stage: true, value: true },
+      select: {
+        value: true,
+        stage: { select: { name: true } },
+      },
     }),
   ]);
 
   const totalRevenue = deals
-    .filter((d) => d.stage === "CLOSED_WON")
-    .reduce((sum, d) => sum + (d.value ?? 0), 0);
+    .filter((d) => d.stage?.name?.toLowerCase() === "won")
+    .reduce((sum: number, d) => sum + (d.value ?? 0), 0);
 
   const openDeals = deals.filter(
-    (d) => !["CLOSED_WON", "CLOSED_LOST"].includes(d.stage)
+    (d) => !["won", "lost"].includes(d.stage?.name?.toLowerCase() ?? "")
   ).length;
 
   const stats = [
     { label: "Total Contacts", value: totalContacts, icon: Users, color: "bg-blue-50 text-blue-600" },
     { label: "Total Deals", value: totalDeals, icon: Target, color: "bg-purple-50 text-purple-600" },
     { label: "Open Deals", value: openDeals, icon: TrendingUp, color: "bg-orange-50 text-orange-600" },
-    { label: "Revenue Won", value: formatCurrency(totalRevenue), icon: DollarSign, color: "bg-green-50 text-green-600" },
+    { label: "Revenue Won", value: formatCurrency(totalRevenue), icon: Coins, color: "bg-green-50 text-green-600" },
   ];
 
   return (
