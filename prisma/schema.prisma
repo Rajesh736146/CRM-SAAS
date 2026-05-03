@@ -1,0 +1,342 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          Role      @default(MEMBER)
+  organizationId String?
+  organization  Organization? @relation(fields: [organizationId], references: [id])
+  accounts      Account[]
+  sessions      Session[]
+  activities    Activity[]
+  auditLogs     AuditLog[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Organization {
+  id                   String                   @id @default(cuid())
+  name                 String
+  slug                 String                   @unique
+  plan                 Plan                     @default(FREE)
+  stripeCustomerId     String?                  @unique
+  stripeSubscriptionId String?                  @unique
+  planExpiresAt        DateTime?
+  seats                Int                      @default(5)
+  users                User[]
+  contacts             Contact[]
+  companies            Company[]
+  deals                Deal[]
+  pipelines            Pipeline[]
+  customFields         CustomFieldDefinition[]
+  auditLogs            AuditLog[]
+  webhooks             Webhook[]
+  apiKeys              ApiKey[]
+  invitations          Invitation[]
+  emails               Email[]
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+}
+
+model Pipeline {
+  id             String          @id @default(cuid())
+  name           String
+  objectType     ObjectType      @default(DEAL)
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  stages         PipelineStage[]
+  deals          Deal[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model PipelineStage {
+  id         String   @id @default(cuid())
+  name       String
+  order      Int
+  color      String   @default("#6366f1")
+  pipelineId String
+  pipeline   Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  deals      Deal[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Contact {
+  id             String             @id @default(cuid())
+  firstName      String
+  lastName       String
+  email          String?
+  phone          String?
+  title          String?
+  status         ContactStatus      @default(LEAD)
+  score          Int                @default(0)
+  organizationId String
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  companyId      String?
+  company        Company?           @relation(fields: [companyId], references: [id])
+  deals          Deal[]
+  activities     Activity[]
+  tags           Tag[]
+  customFields   CustomFieldValue[]
+  emails         Email[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+model Company {
+  id             String             @id @default(cuid())
+  name           String
+  website        String?
+  industry       String?
+  size           String?
+  organizationId String
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contacts       Contact[]
+  deals          Deal[]
+  activities     Activity[]
+  customFields   CustomFieldValue[]
+  emails         Email[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+model Deal {
+  id             String             @id @default(cuid())
+  title          String
+  value          Float?
+  closeDate      DateTime?
+  organizationId String
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  pipelineId     String?
+  pipeline       Pipeline?          @relation(fields: [pipelineId], references: [id])
+  stageId        String?
+  stage          PipelineStage?     @relation(fields: [stageId], references: [id])
+  contactId      String?
+  contact        Contact?           @relation(fields: [contactId], references: [id])
+  companyId      String?
+  company        Company?           @relation(fields: [companyId], references: [id])
+  activities     Activity[]
+  customFields   CustomFieldValue[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+model Activity {
+  id             String       @id @default(cuid())
+  type           ActivityType
+  title          String
+  description    String?
+  dueDate        DateTime?
+  completed      Boolean      @default(false)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  contactId      String?
+  contact        Contact?     @relation(fields: [contactId], references: [id])
+  companyId      String?
+  company        Company?     @relation(fields: [companyId], references: [id])
+  dealId         String?
+  deal           Deal?        @relation(fields: [dealId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Tag {
+  id       String    @id @default(cuid())
+  name     String
+  color    String    @default("#6366f1")
+  contacts Contact[]
+}
+
+model CustomFieldDefinition {
+  id             String             @id @default(cuid())
+  name           String
+  label          String
+  type           FieldType
+  objectType     ObjectType
+  options        Json?
+  required       Boolean            @default(false)
+  organizationId String
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  values         CustomFieldValue[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@unique([organizationId, objectType, name])
+}
+
+model CustomFieldValue {
+  id         String                @id @default(cuid())
+  value      String
+  fieldId    String
+  field      CustomFieldDefinition @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  recordId   String
+  recordType ObjectType
+  contactId  String?
+  contact    Contact?              @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  companyId  String?
+  company    Company?              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  dealId     String?
+  deal       Deal?                 @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+
+  @@unique([fieldId, recordId])
+}
+
+model AuditLog {
+  id             String       @id @default(cuid())
+  action         String
+  entityType     String
+  entityId       String
+  before         Json?
+  after          Json?
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, createdAt])
+  @@index([entityType, entityId])
+}
+
+model Webhook {
+  id             String       @id @default(cuid())
+  url            String
+  events         String[]
+  secret         String
+  active         Boolean      @default(true)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model ApiKey {
+  id             String       @id @default(cuid())
+  name           String
+  keyHash        String       @unique
+  lastUsedAt     DateTime?
+  expiresAt      DateTime?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Invitation {
+  id             String       @id @default(cuid())
+  email          String
+  role           Role         @default(MEMBER)
+  token          String       @unique @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  createdAt      DateTime     @default(now())
+}
+
+model Email {
+  id             String         @id @default(cuid())
+  subject        String
+  body           String
+  from           String
+  to             String
+  direction      EmailDirection
+  externalId     String?
+  contactId      String?
+  contact        Contact?       @relation(fields: [contactId], references: [id])
+  companyId      String?
+  company        Company?       @relation(fields: [companyId], references: [id])
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sentAt         DateTime
+  createdAt      DateTime       @default(now())
+
+  @@index([organizationId, sentAt])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum Plan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum ContactStatus {
+  LEAD
+  PROSPECT
+  CUSTOMER
+  CHURNED
+}
+
+enum ActivityType {
+  CALL
+  EMAIL
+  MEETING
+  TASK
+  NOTE
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  DATE
+  SELECT
+  CHECKBOX
+  URL
+}
+
+enum ObjectType {
+  CONTACT
+  COMPANY
+  DEAL
+}
+
+enum EmailDirection {
+  INBOUND
+  OUTBOUND
+}
